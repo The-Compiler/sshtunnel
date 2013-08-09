@@ -214,7 +214,6 @@ cmd_systemd_start() {
     fi
     which "$ssh" &>/dev/null || die "$ssh not found"
 
-    ssh_opts_global=$(conf_key ssh ssh_options)
     if [[ "$ssh" == *autossh* ]]; then
         read -ra autossh_env <<< "$(conf_section autossh | grep '^AUTOSSH_')"
         tunnel_cmd+=("env" "--" "${autossh_env[@]}" "$ssh")
@@ -240,6 +239,8 @@ cmd_systemd_start() {
     tunnel=$(conf_key "tunnel.$name" tunnel) || die "tunnel not set ($?)"
     tunnel_cmd+=("$tunnel")
 
+    ssh_opts_global=$(conf_key ssh ssh_options)
+    [[ "$ssh_opts_global" ]] && tunnel_cmd+=("$ssh_opts_global")
     ssh_opts_local=$(conf_key "tunnel.$name" ssh_options)
     [[ "$ssh_opts_local" ]] && tunnel_cmd+=("$ssh_opts_local")
 
