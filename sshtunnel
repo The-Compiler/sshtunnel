@@ -71,7 +71,7 @@ conf_sections() {
 # $2: exit code (optional)
 die() {
     echo "$1" >&2
-    exit "${2:-0}"
+    exit "${2:-1}"
 }
 
 # Prints an usage message
