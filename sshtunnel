@@ -113,12 +113,17 @@ parseargs() {
         esac
     done
     g_cmd="$1"
+    shift
     case "$g_cmd" in
         start-all|stop-all|list) # Valid commands without argument
             ;;
         start|stop) # Valid commands with argument
-            usage
-            die "Command $g_cmd needs an argument!"
+            if (( $# < 1 )); then
+                usage
+                die "Command $g_cmd needs an argument!"
+            else
+                g_arg="$1"
+            fi
             ;;
         "") # No command, default to list
             g_cmd=list
