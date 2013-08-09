@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 
 g_config="/etc/sshtunnel.conf"
+g_service="sshtunnel"
 
 # Gets a config section from the config
 # $1: name of the section
@@ -144,6 +145,27 @@ checkroot() {
             [[ "$UID" != 0 ]] && die "This command needs root privileges!"
             ;;
     esac
+}
+
+# Simple systemd wrapper to start tunnel
+cmd_start() {
+    systemctl start "${g_service}@${g_arg}.service"
+}
+
+# Simple systemd wrapper to stop tunnel
+cmd_start() {
+    systemctl stop "${g_service}@${g_arg}.service"
+}
+
+# List running tunnels
+cmd_list() {
+    systemctl list-units -t service -t loaded --full --no-legend --no-pager | while read name _; do
+        if [[ "$name" == "${g_service}@"*.service ]]; then
+            name="${name#"${g_service}@"}"
+            name="${name%.service}"
+            echo "$name"
+        fi
+    done
 }
 
 parseargs "$@"
