@@ -130,4 +130,4 @@ parseargs() {
     esac
 }
 
-parseargs
+parseargs "$@"
