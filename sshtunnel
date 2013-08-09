@@ -75,7 +75,7 @@ die() {
 usage() {
     cat >&2 << EOF
 Usage: $0 [-c <config>] <command> [<name>]
-    -c: Use an alterate config file
+    -c: Use an alternate config file
 
     Commands:
         start <name>: Starts the tunnel named <name>
