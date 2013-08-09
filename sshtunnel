@@ -228,6 +228,8 @@ cmd_systemd_start() {
             tunnel_cmd+=("-M" "0")
             tunnel_cmd+=("-o" "ServerAliveInterval=$monitor_ssh_interval")
             tunnel_cmd+=("-o" "ServerAliveCountMax=$monitor_ssh_count")
+        else
+            die "Invalid value for monitoring!"
         fi
     else
         tunnel_cmd+=("$ssh")
