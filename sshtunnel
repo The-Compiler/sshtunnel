@@ -202,6 +202,7 @@ cmd_profile() {
     local monitor_ssh_count
     local user
     local host
+    local userhost
     local port
     local tunnel
     local ssh_opts_local
@@ -275,9 +276,12 @@ cmd_profile() {
     ssh_opts_local=$(conf_key "tunnel.$name" ssh_options)
     [[ "$ssh_opts_local" ]] && tunnel_cmd+=($ssh_opts_local) # no quotes sic
 
-    user=$(conf_key "tunnel.$name" user) || die "user not set"
+    user=$(conf_key "tunnel.$name" user)
     host=$(conf_key "tunnel.$name" host) || die "host not set"
-    tunnel_cmd+=("$user@$host")
+    userhost=
+    [[ "$user" ]] && userhost+="$user@"
+    userhost+="$host"
+    tunnel_cmd+=("$userhost")
 
     [[ "$do_print" ]] && echo "${tunnel_cmd[@]}"
     [[ "$do_exec" ]] && "${tunnel_cmd[@]}"
