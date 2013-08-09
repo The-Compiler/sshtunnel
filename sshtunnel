@@ -264,12 +264,12 @@ cmd_profile() {
     tunnel_cmd+=("-p" "$port")
 
     tunnel=$(conf_key "tunnel.$name" tunnel) || die "tunnel not set"
-    tunnel_cmd+=("$tunnel")
+    tunnel_cmd+=($tunnel) # no quotes sic
 
     ssh_opts_global=$(conf_key ssh ssh_options)
-    [[ "$ssh_opts_global" ]] && tunnel_cmd+=("$ssh_opts_global")
+    [[ "$ssh_opts_global" ]] && tunnel_cmd+=($ssh_opts_global) # no quotes sic
     ssh_opts_local=$(conf_key "tunnel.$name" ssh_options)
-    [[ "$ssh_opts_local" ]] && tunnel_cmd+=("$ssh_opts_local")
+    [[ "$ssh_opts_local" ]] && tunnel_cmd+=($ssh_opts_local) # no quotes sic
 
     user=$(conf_key "tunnel.$name" user) || die "user not set"
     host=$(conf_key "tunnel.$name" host) || die "host not set"
