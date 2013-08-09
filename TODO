@@ -1,0 +1,4 @@
+- Testing
+- What do do on password login? Can we ask interactively?
+- User in service file
+- Wrappers for easy ssh-keygen/ssh-copy-id
