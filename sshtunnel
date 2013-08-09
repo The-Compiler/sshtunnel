@@ -219,18 +219,25 @@ cmd_systemd_start() {
         tunnel_cmd+=("env" "--" "${autossh_env[@]}" "$ssh")
 
         monitoring=$(conf_key autossh monitoring ssh)
-        if [[ "$monitoring" == port ]]; then
-            monitor_port=$(conf_key autossh monitor_port 10000)
-            tunnel_cmd+=("-M" "${monitor_port}")
-        elif [[ "$monitoring" == ssh ]]; then
-            monitor_ssh_interval=$(conf_key autossh monitor_ssh_interval 15)
-            monitor_ssh_count=$(conf_key autossh monitor_ssh_count 3)
-            tunnel_cmd+=("-M" "0")
-            tunnel_cmd+=("-o" "ServerAliveInterval=$monitor_ssh_interval")
-            tunnel_cmd+=("-o" "ServerAliveCountMax=$monitor_ssh_count")
-        else
-            die "Invalid value for monitoring!"
-        fi
+        case "$monitoring" in
+            port)
+                monitor_port=$(conf_key autossh monitor_port 10000)
+                tunnel_cmd+=("-M" "${monitor_port}")
+                ;;
+            ssh)
+                monitor_ssh_interval=$(conf_key autossh monitor_ssh_interval 15)
+                monitor_ssh_count=$(conf_key autossh monitor_ssh_count 3)
+                tunnel_cmd+=("-M" "0")
+                tunnel_cmd+=("-o" "ServerAliveInterval=$monitor_ssh_interval")
+                tunnel_cmd+=("-o" "ServerAliveCountMax=$monitor_ssh_count")
+                ;;
+            none)
+                tunnel_cmd+=("-M" "0")
+                ;;
+            *)
+                die "Invalid value for monitoring!"
+                ;;
+        esac
     else
         tunnel_cmd+=("$ssh")
     fi
