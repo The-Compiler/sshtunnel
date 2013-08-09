@@ -1,6 +1,6 @@
 [Unit]
 Description=SSH Tunnel managment
-Requires=network.service
+Requires=network.target
 After=network.service
 
 [Service]
