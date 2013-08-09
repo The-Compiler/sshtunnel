@@ -118,9 +118,9 @@ parseargs() {
     g_cmd="$1"
     shift
     case "$g_cmd" in
-        start-all|stop-all|list) # Valid commands without argument
+        start-all|stop-all|list) # Valid commands without arg
             ;;
-        start|stop) # Valid commands with argument
+        start|stop|systemd-start) # Valid commands with argument
             if (( $# < 1 )); then
                 usage
                 die "Command $g_cmd needs an argument!"
