@@ -85,6 +85,7 @@ Usage: $0 [-c <config>] <command> [<name>]
     Commands:
         start <name>: Starts the tunnel named <name>
         stop <name>:  Stops the tunnel named <name>
+        print <name>: Validate config and print command that would be run
         start-all:    Start all configured tunnels
         stop-all:     Stop running tunnels
         list:         List running tunnels
@@ -122,7 +123,7 @@ parseargs() {
     case "$g_cmd" in
         start-all|stop-all|list) # Valid commands without arg
             ;;
-        start|stop|systemd-start) # Valid commands with argument
+        start|stop|systemd-start|print) # Valid commands with argument
             if (( $# < 1 )); then
                 usage
                 die "Command $g_cmd needs an argument!"
@@ -187,7 +188,12 @@ cmd_stop_all() {
 }
 
 # Actually start a tunnel, gets called from systemd
-cmd_systemd_start() {
+# Positional parameters:
+#   run   Execute command
+#   print Print commandline
+# And any combination thereof. Without any parameter, the profile gets
+# validated only.
+cmd_profile() {
     local ssh
     local ssh_opts_global
     local monitoring
@@ -201,6 +207,16 @@ cmd_systemd_start() {
     local ssh_opts_local
     local name
     local autossh_env
+    local do_print
+    local do_exec
+
+    while :; do
+        case "$1" in
+            print) do_print=1; shift ;;
+            run)   do_exec=1;  shift ;;
+            *) break ;;
+        esac
+    done
 
     name="$g_arg"
 
@@ -208,7 +224,7 @@ cmd_systemd_start() {
         die "Tunnel $name does not exist!"
     fi
 
-    tunnel_cmd=()
+    tunnel_cmd=('exec' '--')
 
     ssh=$(conf_key ssh ssh auto)
     if [[ "$ssh" == auto ]]; then
@@ -259,7 +275,8 @@ cmd_systemd_start() {
     host=$(conf_key "tunnel.$name" host) || die "host not set"
     tunnel_cmd+=("$user@$host")
 
-    echo "${tunnel_cmd[@]}"
+    [[ "$do_print" ]] && echo "${tunnel_cmd[@]}"
+    [[ "$do_exec" ]] && "${tunnel_cmd[@]}"
 }
 
 parseargs "$@"
@@ -271,5 +288,6 @@ case "$g_cmd" in
     start-all)     cmd_start_all     ;;
     stop-all)      cmd_stop_all      ;;
     list)          cmd_list          ;;
-    systemd-start) cmd_systemd_start ;;
+    print)         cmd_profile print ;;
+    systemd-start) cmd_profile run   ;;
 esac
