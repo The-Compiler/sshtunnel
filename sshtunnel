@@ -246,7 +246,7 @@ cmd_systemd_start() {
     host=$(conf_key "tunnel.$name" host) || die "host not set"
     tunnel_cmd+=("$user@$host")
 
-    echo "Assembled command: ${tunnel_cmd[@]}"
+    echo "${tunnel_cmd[@]}"
 }
 
 parseargs "$@"
