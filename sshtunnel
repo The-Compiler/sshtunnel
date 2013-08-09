@@ -135,4 +135,14 @@ parseargs() {
     esac
 }
 
+# Checks commands which need to be called as root
+checkroot() {
+    case "$g_cmd" in
+        start|stop|start-all|stop-all)
+            [[ "$UID" != 0 ]] && die "This command needs root privileges!"
+            ;;
+    esac
+}
+
 parseargs "$@"
+checkroot
