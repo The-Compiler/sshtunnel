@@ -273,8 +273,8 @@ cmd_profile() {
 
     tunnel_cmd+=('-N') # don't execute a command
 
-    port=$(conf_key "tunnel.$name" port 22)
-    tunnel_cmd+=("-p" "$port")
+    port=$(conf_key "tunnel.$name" port)
+    [[ "$port" ]] && tunnel_cmd+=("-p" "$port")
 
     tunnel=$(conf_key "tunnel.$name" tunnel) || die "tunnel not set"
     tunnel_cmd+=($tunnel) # no quotes sic
