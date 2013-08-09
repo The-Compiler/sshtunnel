@@ -168,8 +168,9 @@ cmd_stop() {
 
 # List running tunnels
 cmd_list() {
-    systemctl list-units -t service -t loaded --full --no-legend --no-pager | while read name _; do
-        if [[ "$name" == "${g_service}@"*.service ]]; then
+    systemctl list-units -t service --full --no-legend --no-pager | \
+    while read name loaded active running _; do
+        if [[ "$name" == "${g_service}@"*.service && "$running" == running ]]; then
             name="${name#"${g_service}@"}"
             name="${name%.service}"
             echo "$name"
