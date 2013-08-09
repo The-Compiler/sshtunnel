@@ -177,6 +177,20 @@ cmd_list() {
     done
 }
 
+# Start all tunnels
+cmd_start_all() {
+    config_sections | grep '^tunnel\.' | while read tunnel; do
+        g_arg="${tunnel#tunnel.}"
+        cmd_start
+    done
+}
+
+# Stop all tunnels
+cmd_stop_all() {
+    cmd_list | while read g_arg; do
+        cmd_stop
+    done
+}
 parseargs "$@"
 checkroot
 
