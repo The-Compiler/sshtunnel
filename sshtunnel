@@ -49,6 +49,19 @@ conf_key() {
     return 1
 }
 
+# Gets all sections from the config
+conf_sections() {
+    [[ -f "$config" && -r "$config" ]] || return 3
+    while read line; do # No -r by intention
+        line="${line%%[;#]*}" # Strip inline comments
+        if [[ "$line" == '['*']' ]]; then
+            line="${line#\[}"
+            line="${line%\]}"
+            echo "$line"
+        fi
+    done < "$config"
+}
+
 # Prints an error message and exits
 # $1: message
 # $2: exit code (optional)
