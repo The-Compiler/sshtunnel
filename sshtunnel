@@ -131,8 +131,13 @@ parseargs() {
                 g_arg="$1"
             fi
             ;;
+        help)
+            usage
+            exit 0
+            ;;
         "") # No command, default to list
-            g_cmd=list
+            usage
+            exit 1
             ;;
         *) # Invalid command
             usage
