@@ -1,0 +1,11 @@
+# Maintainer: Florian Bruhin (The Compiler) <archlinux.org@the-compiler.org>
+
+post_install() {
+  true
+}
+
+post_upgrade() {
+  true
+}
+
+# vim:set ts=2 sw=2 et:
