@@ -44,11 +44,11 @@ conf_section() {
 # $3: default value (optional)
 conf_key() {
     (( $# < 2 )) && return 2
-    conf_section "$1" | while read -r line; do
+    while read -r line; do
         key="${line%%=*}"
         val="${line#*=}"
         [[ "$key" == "$2" ]] && echo "$val" && return 0
-    done
+    done <<< "$(conf_section "$1")"
     [[ "$3" ]] && echo "$3"
     return 1
 }
