@@ -136,6 +136,7 @@ parseargs() {
             die "Invalid command: $g_cmd"
             ;;
     esac
+    [[ -f "$g_config" && -r "$g_config" ]] || die "No config found!"
 }
 
 # Checks commands which need to be called as root
