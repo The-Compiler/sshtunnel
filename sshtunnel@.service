@@ -1,0 +1,8 @@
+[Unit]
+Description=SSH Tunnel managment
+Requires=network.service
+After=network.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sshtunnel-systemd %i
