@@ -28,7 +28,7 @@ conf_section() {
     unset secstart
     while read line; do # No -r by intention
         line="${line%%[;#]*}" # Strip inline comments
-        line="${line#[\'\"]}" # Strip string-chars
+        line="${line/=[\'\"]/=}" # Strip string-chars
         line="${line%[\'\"]}"
         [[ -z "$line" ]] && continue
         if [[ "$secstart" ]]; then
