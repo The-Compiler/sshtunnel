@@ -224,6 +224,10 @@ cmd_profile() {
         die "Tunnel $name does not exist!"
     fi
 
+    if [[ "$name" == *[^[:alnum:].:_/\\]* ]]; then
+        die "Name $name contains an invalid character!"
+    fi
+
     tunnel_cmd=('exec' '--')
 
     ssh=$(conf_key ssh ssh auto)
