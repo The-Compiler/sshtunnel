@@ -16,13 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 
-config="/etc/sshtunnel.conf"
+g_config="/etc/sshtunnel.conf"
 
 # Gets a config section from the config
 # $1: name of the section
 conf_section() {
+    local secstart
     (( $# < 1 )) && return 2
-    [[ -f "$config" && -r "$config" ]] || return 3
+    [[ -f "$g_config" && -r "$g_config" ]] || return 3
     unset secstart
     while read line; do # No -r by intention
         line="${line%%[;#]*}" # Strip inline comments
@@ -32,7 +33,7 @@ conf_section() {
             echo "$line"
         fi
         [[ "$line" == "[$1]" ]] && secstart=1 # Start of a section
-    done < "$config"
+    done < "$g_config"
     [[ "$secstart" ]] && return 0 || return 1
 }
 
@@ -51,7 +52,7 @@ conf_key() {
 
 # Gets all sections from the config
 conf_sections() {
-    [[ -f "$config" && -r "$config" ]] || return 3
+    [[ -f "$g_config" && -r "$g_config" ]] || return 3
     while read line; do # No -r by intention
         line="${line%%[;#]*}" # Strip inline comments
         if [[ "$line" == '['*']' ]]; then
@@ -59,7 +60,7 @@ conf_sections() {
             line="${line%\]}"
             echo "$line"
         fi
-    done < "$config"
+    done < "$g_config"
 }
 
 # Prints an error message and exits
@@ -91,7 +92,7 @@ parseargs() {
     while :; do
         case "$1" in
             -c | --config)
-                config="$2"
+                g_config="$2"
                 shift 2
                 ;;
             -h | --help)
