@@ -157,7 +157,7 @@ cmd_start() {
 }
 
 # Simple systemd wrapper to stop tunnel
-cmd_start() {
+cmd_stop() {
     systemctl stop "${g_service}@${g_arg}.service"
 }
 
