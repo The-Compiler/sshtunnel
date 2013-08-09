@@ -183,6 +183,72 @@ cmd_stop_all() {
         cmd_stop
     done
 }
+
+# Actually start a tunnel, gets called from systemd
+cmd_systemd_start() {
+    local ssh
+    local ssh_opts_global
+    local monitoring
+    local monitor_port
+    local monitor_ssh_interval
+    local monitor_ssh_count
+    local user
+    local host
+    local port
+    local tunnel
+    local ssh_opts_local
+    local name
+    local autossh_env
+
+    name="$g_arg"
+
+    if ! conf_sections | grep '^tunnel\.' | grep -qF "tunnel.$name"; then
+        die "Tunnel $name does not exist!"
+    fi
+
+    tunnel_cmd=()
+
+    ssh=$(conf_key ssh ssh auto)
+    if [[ "$ssh" == auto ]]; then
+        which autossh &>/dev/null && ssh=autossh || ssh=ssh
+    fi
+    which "$ssh" &>/dev/null || die "$ssh not found"
+
+    ssh_opts_global=$(conf_key ssh ssh_options)
+    if [[ "$ssh" == *autossh* ]]; then
+        read -ra autossh_env <<< "$(conf_section autossh | grep '^AUTOSSH_')"
+        tunnel_cmd+=("env" "--" "${autossh_env[@]}" "$ssh")
+
+        monitoring=$(conf_key autossh monitoring ssh)
+        if [[ "$monitoring" == port ]]; then
+            monitor_port=$(conf_key autossh monitor_port 10000)
+            tunnel_cmd+=("-M" "${monitor_port}")
+        elif [[ "$monitoring" == ssh ]]; then
+            monitor_ssh_interval=$(conf_key autossh monitor_ssh_interval 15)
+            monitor_ssh_count=$(conf_key autossh monitor_ssh_count 3)
+            tunnel_cmd+=("-o" "ServerAliveInterval=$monitor_ssh_interval")
+            tunnel_cmd+=("-o" "ServerAliveCountMax=$monitor_ssh_count")
+        fi
+    else
+        tunnel_cmd+=("$ssh")
+    fi
+
+    port=$(conf_key "tunnel.$name" port 22)
+    tunnel_cmd+=("-p" "$port")
+
+    tunnel=$(conf_key "tunnel.$name" tunnel) || die "tunnel not set ($?)"
+    tunnel_cmd+=("$tunnel")
+
+    ssh_opts_local=$(conf_key "tunnel.$name" ssh_options)
+    tunnel_cmd+=("$ssh_opts_local")
+
+    user=$(conf_key "tunnel.$name" user) || die "user not set"
+    host=$(conf_key "tunnel.$name" host) || die "host not set"
+    tunnel_cmd+=("$user@$host")
+
+    echo "Assembled command: ${tunnel_cmd[@]}"
+}
+
 parseargs "$@"
 checkroot
 
