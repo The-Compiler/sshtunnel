@@ -128,7 +128,7 @@ parseargs() {
                 usage
                 die "Command $g_cmd needs an argument!"
             else
-                g_arg="$1"
+                g_arg="$@"
             fi
             ;;
         help)
@@ -158,12 +158,12 @@ checkroot() {
 
 # Simple systemd wrapper to start tunnel
 cmd_start() {
-    systemctl start "${g_service}@${g_arg}.service"
+    systemctl start "${g_service}@${g_arg[1]}.service"
 }
 
 # Simple systemd wrapper to stop tunnel
 cmd_stop() {
-    systemctl stop "${g_service}@${g_arg}.service"
+    systemctl stop "${g_service}@${g_arg[1]}.service"
 }
 
 # List running tunnels
@@ -181,14 +181,15 @@ cmd_list() {
 # Start all tunnels
 cmd_start_all() {
     conf_sections | grep '^tunnel\.' | while read tunnel; do
-        g_arg="${tunnel#tunnel.}"
+        g_arg=("${tunnel#tunnel.}")
         cmd_start
     done
 }
 
 # Stop all tunnels
 cmd_stop_all() {
-    cmd_list | while read g_arg; do
+    cmd_list | while read tunne; do
+        g_arg=("$tunnel")
         cmd_stop
     done
 }
@@ -225,7 +226,7 @@ cmd_profile() {
         esac
     done
 
-    name="$g_arg"
+    name="${g_arg[0]}"
 
     if ! conf_sections | grep '^tunnel\.' | grep -qF "tunnel.$name"; then
         die "Tunnel $name does not exist!"
