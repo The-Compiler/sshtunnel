@@ -148,3 +148,12 @@ checkroot() {
 
 parseargs "$@"
 checkroot
+
+case "$g_cmd" in
+    start)         cmd_start         ;;
+    stop)          cmd_stop          ;;
+    start-all)     cmd_start_all     ;;
+    stop-all)      cmd_stop_all      ;;
+    list)          cmd_list          ;;
+    systemd-start) cmd_systemd_start ;;
+esac
