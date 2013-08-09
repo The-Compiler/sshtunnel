@@ -120,6 +120,9 @@ parseargs() {
             usage
             die "Command $g_cmd needs an argument!"
             ;;
+        "") # No command, default to list
+            g_cmd=list
+            ;;
         *) # Invalid command
             usage
             die "Invalid command: $g_cmd"
