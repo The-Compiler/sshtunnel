@@ -265,6 +265,8 @@ cmd_profile() {
         tunnel_cmd+=("$ssh")
     fi
 
+    tunnel_cmd+=('-N') # don't execute a command
+
     port=$(conf_key "tunnel.$name" port 22)
     tunnel_cmd+=("-p" "$port")
 
