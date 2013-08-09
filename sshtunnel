@@ -226,6 +226,7 @@ cmd_systemd_start() {
         elif [[ "$monitoring" == ssh ]]; then
             monitor_ssh_interval=$(conf_key autossh monitor_ssh_interval 15)
             monitor_ssh_count=$(conf_key autossh monitor_ssh_count 3)
+            tunnel_cmd+=("-M" "0")
             tunnel_cmd+=("-o" "ServerAliveInterval=$monitor_ssh_interval")
             tunnel_cmd+=("-o" "ServerAliveCountMax=$monitor_ssh_count")
         fi
