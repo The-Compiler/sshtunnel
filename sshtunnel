@@ -56,7 +56,7 @@ conf_key() {
 # Gets all sections from the config
 conf_sections() {
     [[ -f "$g_config" && -r "$g_config" ]] || return 3
-    while read line; do # No -r by intention
+    while read -r line; do
         line="${line%%[;#]*}" # Strip inline comments
         if [[ "$line" == '['*']' ]]; then
             line="${line#\[}"
