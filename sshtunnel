@@ -245,7 +245,7 @@ cmd_systemd_start() {
     port=$(conf_key "tunnel.$name" port 22)
     tunnel_cmd+=("-p" "$port")
 
-    tunnel=$(conf_key "tunnel.$name" tunnel) || die "tunnel not set ($?)"
+    tunnel=$(conf_key "tunnel.$name" tunnel) || die "tunnel not set"
     tunnel_cmd+=("$tunnel")
 
     ssh_opts_global=$(conf_key ssh ssh_options)
