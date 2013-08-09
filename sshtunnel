@@ -112,6 +112,19 @@ parseargs() {
                 ;;
         esac
     done
+    g_cmd="$1"
+    case "$g_cmd" in
+        start-all|stop-all|list) # Valid commands without argument
+            ;;
+        start|stop) # Valid commands with argument
+            usage
+            die "Command $g_cmd needs an argument!"
+            ;;
+        *) # Invalid command
+            usage
+            die "Invalid command: $g_cmd"
+            ;;
+    esac
 }
 
 parseargs
