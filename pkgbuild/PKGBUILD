@@ -13,6 +13,7 @@ optdepends=('autossh: More stabile connections')
 provides=('sshtunnel')
 conflicts=('sshtunnel')
 backup=('etc/sshtunnel.conf')
+options('emptydirs')
 install=$pkgname.install
 source=('git://cmpl.cc/sshtunnel')
 sha1sums=('SKIP')
@@ -27,6 +28,7 @@ package() {
   install -dm755 "$pkgdir/etc"
   install -dm755 "$pkgdir/usr/bin"
   install -dm755 "$pkgdir/usr/lib/systemd/system"
+  install -o558 -g558 -dm770 "$pkgdir/var/lib/sshtunnel"
   install -Dm755 sshtunnel "$pkgdir/usr/bin"
   install -Dm644 sshtunnel.conf "$pkgdir/etc"
   install -Dm644 sshtunnel@.service "$pkgdir/usr/lib/systemd/system"

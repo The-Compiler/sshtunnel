@@ -5,4 +5,6 @@ After=network.service
 
 [Service]
 Type=simple
+User=sshtunnel
+Group=sshtunnel
 ExecStart=/usr/bin/sshtunnel-systemd %i
