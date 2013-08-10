@@ -7,4 +7,4 @@ After=network.service
 Type=simple
 User=sshtunnel
 Group=sshtunnel
-ExecStart=/usr/bin/sshtunnel-systemd %i
+ExecStart=/usr/bin/sshtunnel connect %i

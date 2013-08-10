@@ -90,6 +90,7 @@ Usage: $0 [-c <config>] <command> [<name>]
         start-all      Starts all configured tunnels
         stop-all       Stops running tunnels
         list           Lists running tunnels
+        connect <name> Connects to the tunnel <name>, usually called by systemd
 EOF
 }
 
@@ -124,7 +125,7 @@ parseargs() {
     case "$g_cmd" in
         start-all|stop-all|list|ssh-keygen) # Valid commands without arg
             ;;
-        start|stop|systemd-start|print) # Valid commands with argument
+        start|stop|connect|print) # Valid commands with argument
             if (( $# < 1 )); then
                 usage
                 die "Command $g_cmd needs an argument!"
@@ -325,5 +326,5 @@ case "$g_cmd" in
     list)          cmd_list          ;;
     print)         cmd_profile print ;;
     ssh-keygen)    cmd_ssh_keygen    ;;
-    systemd-start) cmd_profile run   ;;
+    connect)       cmd_profile run   ;;
 esac
