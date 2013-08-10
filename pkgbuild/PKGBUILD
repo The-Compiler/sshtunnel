@@ -13,7 +13,7 @@ optdepends=('autossh: More stabile connections')
 provides=('sshtunnel')
 conflicts=('sshtunnel')
 backup=('etc/sshtunnel.conf')
-options('emptydirs')
+options=('emptydirs')
 install=$pkgname.install
 source=('git://cmpl.cc/sshtunnel')
 sha1sums=('SKIP')
