@@ -83,12 +83,15 @@ Usage: $0 [-c <config>] <command> [<name>]
     -c: Use an alternate config file
 
     Commands:
-        start <name>: Starts the tunnel named <name>
-        stop <name>:  Stops the tunnel named <name>
-        print <name>: Validate config and print command that would be run
-        start-all:    Start all configured tunnels
-        stop-all:     Stop running tunnels
-        list:         List running tunnels
+        start <name>            Starts the tunnel named <name>
+        stop <name>             Stops the tunnel named <name>
+        print <name>            Validates config and prints command that
+                                would be run
+        ssh-keygen [<options>]  Generates ssh-key (with <options> passed to
+                                ssh-keygen)
+        start-all               Starts all configured tunnels
+        stop-all                Stops running tunnels
+        list                    Lists running tunnels
 EOF
 }
 
@@ -121,7 +124,7 @@ parseargs() {
     g_cmd="$1"
     shift
     case "$g_cmd" in
-        start-all|stop-all|list) # Valid commands without arg
+        start-all|stop-all|list|ssh-keygen) # Valid commands without arg
             ;;
         start|stop|systemd-start|print) # Valid commands with argument
             if (( $# < 1 )); then
@@ -150,7 +153,7 @@ parseargs() {
 # Checks commands which need to be called as root
 checkroot() {
     case "$g_cmd" in
-        start|stop|start-all|stop-all)
+        start|stop|start-all|stop-all|ssh-keygen)
             [[ "$UID" != 0 ]] && die "This command needs root privileges!"
             ;;
     esac
@@ -296,6 +299,23 @@ cmd_profile() {
     [[ "$do_exec" ]] && "${tunnel_cmd[@]}"
 }
 
+cmd_ssh_keygen() {
+    local user
+
+    user=$(conf_key general user) || die "user not set"
+    su "$user" -s /bin/bash -c 'ssh-keygen -N "" -f "$HOME/.ssh/id_rsa"'
+    if (( $? == 0 )); then
+        echo
+        echo "Key generation succeeded. These are the contents of id_rsa.pub"
+        echo "for the $user user:"
+        echo
+        su "$user" -s /bin/bash -c 'cat "$HOME/.ssh/id_rsa.pub"'
+    else
+        echo
+        echo "Key generation failed!"
+    fi
+}
+
 parseargs "$@"
 checkroot
 
@@ -306,5 +326,6 @@ case "$g_cmd" in
     stop-all)      cmd_stop_all      ;;
     list)          cmd_list          ;;
     print)         cmd_profile print ;;
+    ssh-keygen)    cmd_ssh_keygen    ;;
     systemd-start) cmd_profile run   ;;
 esac
