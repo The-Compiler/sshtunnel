@@ -1,0 +1,5 @@
+pkgbuild/pkg/
+pkgbuild/src/
+pkgbuild/*.pkg.tar*
+pkgbuild/sshtunnel
+sshtunnel.conf.test
