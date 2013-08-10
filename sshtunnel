@@ -83,15 +83,13 @@ Usage: $0 [-c <config>] <command> [<name>]
     -c: Use an alternate config file
 
     Commands:
-        start <name>            Starts the tunnel named <name>
-        stop <name>             Stops the tunnel named <name>
-        print <name>            Validates config and prints command that
-                                would be run
-        ssh-keygen [<options>]  Generates ssh-key (with <options> passed to
-                                ssh-keygen)
-        start-all               Starts all configured tunnels
-        stop-all                Stops running tunnels
-        list                    Lists running tunnels
+        start <name>   Starts the tunnel named <name>
+        stop <name>    Stops the tunnel named <name>
+        print <name>   Validates config and prints command that would be run
+        ssh-keygen     Generates ssh-key
+        start-all      Starts all configured tunnels
+        stop-all       Stops running tunnels
+        list           Lists running tunnels
 EOF
 }
 
