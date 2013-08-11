@@ -125,7 +125,7 @@ parseargs() {
     case "$g_cmd" in
         start-all|stop-all|list|ssh-keygen) # Valid commands without arg
             ;;
-        start|stop|connect|print|test) # Valid commands with argument
+        start|stop|connect|print|test|status) # Valid commands with argument
             if (( $# < 1 )); then
                 usage
                 die "Command $g_cmd needs an argument!"
@@ -166,6 +166,11 @@ cmd_start() {
 # Simple systemd wrapper to stop tunnel
 cmd_stop() {
     systemctl stop "${g_service}@${g_arg[0]}.service"
+}
+
+# Simple systemd wrapper to show tunnel status
+cmd_status() {
+    systemctl status "${g_service}@${g_arg[0]}.service"
 }
 
 # List running tunnels
@@ -338,4 +343,5 @@ case "$g_cmd" in
     ssh-keygen)    cmd_ssh_keygen    ;;
     connect)       cmd_profile run   ;;
     test)          cmd_profile test  ;;
+    status)        cmd_status        ;;
 esac
