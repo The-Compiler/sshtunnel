@@ -9,7 +9,8 @@ arch=('any')
 url="http://g.cmpl.cc/sshtunnel"
 license=('GPL')
 depends=('openssh')
-optdepends=('autossh: More stabile connections')
+optdepends=('autossh: More stabile connections'
+            'x11-ssh-askpass: To accept host keys')
 provides=('sshtunnel')
 conflicts=('sshtunnel')
 backup=('etc/sshtunnel.conf')
