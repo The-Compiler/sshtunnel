@@ -90,7 +90,7 @@ Usage: $0 [-c <config>] <command> [<name>]
         start-all      Starts all configured tunnels
         stop-all       Stops running tunnels
         list           Lists running tunnels
-        connect <name> Connects to the tunnel <name>, usually called by systemd
+        test <name>    Opens a test-connection to the tunnel <name> (to accept host keys, etc)
 EOF
 }
 
@@ -125,7 +125,7 @@ parseargs() {
     case "$g_cmd" in
         start-all|stop-all|list|ssh-keygen) # Valid commands without arg
             ;;
-        start|stop|connect|print) # Valid commands with argument
+        start|stop|connect|print|test) # Valid commands with argument
             if (( $# < 1 )); then
                 usage
                 die "Command $g_cmd needs an argument!"
@@ -152,7 +152,7 @@ parseargs() {
 # Checks commands which need to be called as root
 checkroot() {
     case "$g_cmd" in
-        start|stop|start-all|stop-all|ssh-keygen)
+        start|stop|start-all|stop-all|ssh-keygen|test)
             [[ "$UID" != 0 ]] && die "This command needs root privileges!"
             ;;
     esac
@@ -200,6 +200,7 @@ cmd_stop_all() {
 # Positional parameters:
 #   run   Execute command
 #   print Print commandline
+#   test  Do a test connection
 # And any combination thereof. Without any parameter, the profile gets
 # validated only.
 cmd_profile() {
@@ -219,11 +220,14 @@ cmd_profile() {
     local autossh_env
     local do_print
     local do_exec
+    local do_test
+    local localuser
 
     while :; do
         case "$1" in
             print) do_print=1; shift ;;
             run)   do_exec=1;  shift ;;
+            test)  do_test=1;  shift ;;
             *) break ;;
         esac
     done
@@ -238,7 +242,11 @@ cmd_profile() {
         die "Name $name contains an invalid character!"
     fi
 
-    tunnel_cmd=('exec' '--')
+    if [[ ! "$do_test" ]]; then
+        tunnel_cmd=('exec' '--')
+    else
+        localuser=$(conf_key general user) || die "user not set"
+    fi
 
     ssh=$(conf_key ssh ssh auto)
     if [[ "$ssh" == auto ]]; then
@@ -274,13 +282,13 @@ cmd_profile() {
         tunnel_cmd+=("$ssh")
     fi
 
-    tunnel_cmd+=('-N') # don't execute a command
+    [[ ! "$do_test" ]] && tunnel_cmd+=('-N') # don't execute a command
 
     port=$(conf_key "tunnel.$name" port)
     [[ "$port" ]] && tunnel_cmd+=("-p" "$port")
 
     tunnel=$(conf_key "tunnel.$name" tunnel) || die "tunnel not set"
-    tunnel_cmd+=($tunnel) # no quotes sic
+    [[ ! "$do_test" ]] && tunnel_cmd+=($tunnel) # no quotes sic
 
     ssh_opts_global=$(conf_key ssh ssh_options)
     [[ "$ssh_opts_global" ]] && tunnel_cmd+=($ssh_opts_global) # no quotes sic
@@ -293,9 +301,11 @@ cmd_profile() {
     [[ "$user" ]] && userhost+="$user@"
     userhost+="$host"
     tunnel_cmd+=("$userhost")
+    [[ "$do_test" ]] && tunnel_cm+=("exit")
 
     [[ "$do_print" ]] && echo "${tunnel_cmd[@]}"
     [[ "$do_exec" ]] && "${tunnel_cmd[@]}"
+    [[ "$do_test" ]] && su "$localuser" -s /bin/bash -c "${tunnel_cmd[*]}" # * sic
 }
 
 cmd_ssh_keygen() {
@@ -327,4 +337,5 @@ case "$g_cmd" in
     print)         cmd_profile print ;;
     ssh-keygen)    cmd_ssh_keygen    ;;
     connect)       cmd_profile run   ;;
+    test)          cmd_profile test  ;;
 esac
