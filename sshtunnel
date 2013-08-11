@@ -160,12 +160,12 @@ checkroot() {
 
 # Simple systemd wrapper to start tunnel
 cmd_start() {
-    systemctl start "${g_service}@${g_arg[1]}.service"
+    systemctl start "${g_service}@${g_arg[0]}.service"
 }
 
 # Simple systemd wrapper to stop tunnel
 cmd_stop() {
-    systemctl stop "${g_service}@${g_arg[1]}.service"
+    systemctl stop "${g_service}@${g_arg[0]}.service"
 }
 
 # List running tunnels
