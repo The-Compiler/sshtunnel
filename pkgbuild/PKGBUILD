@@ -2,7 +2,7 @@
 
 pkgname=sshtunnel-git
 _gitname=sshtunnel
-pkgver=0.01.21.gf594f57
+pkgver=0.02
 pkgrel=1
 pkgdesc="A tool to manage SSH tunnel to different hosts via systemd"
 arch=('any')
