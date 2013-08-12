@@ -128,40 +128,8 @@ parseargs() {
     done
     g_cmd="$1"
     shift
-    case "$g_cmd" in
-        start-all|stop-all|list|ssh-keygen) # Valid commands without arg
-            ;;
-        start|stop|connect|print|test|status) # Valid commands with argument
-            if (( $# < 1 )); then
-                usage
-                die "Command $g_cmd needs an argument!"
-            else
-                g_arg="$@"
-            fi
-            ;;
-        help)
-            usage
-            exit 0
-            ;;
-        "") # No command, default to list
-            usage
-            exit 1
-            ;;
-        *) # Invalid command
-            usage
-            die "Invalid command: $g_cmd"
-            ;;
-    esac
+    g_arg="$@"
     [[ -f "$g_config" && -r "$g_config" ]] || die "No config found!"
-}
-
-# Checks commands which need to be called as root
-checkroot() {
-    case "$g_cmd" in
-        start|stop|start-all|stop-all|ssh-keygen|test)
-            [[ "$UID" != 0 ]] && die "This command needs root privileges!"
-            ;;
-    esac
 }
 
 # Simple systemd wrapper to start tunnel
@@ -337,17 +305,30 @@ cmd_ssh_keygen() {
 }
 
 parseargs "$@"
-checkroot
 
 case "$g_cmd" in
-    start)         cmd_start         ;;
-    stop)          cmd_stop          ;;
-    start-all)     cmd_start_all     ;;
-    stop-all)      cmd_stop_all      ;;
-    list)          cmd_list          ;;
-    print)         cmd_profile print ;;
-    ssh-keygen)    cmd_ssh_keygen    ;;
-    connect)       cmd_profile run   ;;
-    test)          cmd_profile test  ;;
-    status)        cmd_status        ;;
+    start)      handler=(cmd_start);         args=1; root=1 ;;
+    stop)       handler=(cmd_stop);          args=1; root=1 ;;
+    start-all)  handler=(cmd_start_all);     args=0; root=1 ;;
+    stop-all)   handler=(cmd_stop_all);      args=0; root=1 ;;
+    list)       handler=(cmd_list);          args=0; root=0 ;;
+    print)      handler=(cmd_profile print); args=1; root=0 ;;
+    ssh-keygen) handler=(cmd_ssh_keygen);    args=1; root=1 ;;
+    connect)    handler=(cmd_profile run);   args=1; root=0 ;;
+    test)       handler=(cmd_profile test);  args=1; root=1 ;;
+    status)     handler=(cmd_status);        args=1; root=0 ;;
+    help)       usage; exit 0                               ;;
+    "")         usage; exit 1                               ;;
+    *)          usage; die "Invalid command: $g_cmd"        ;;
 esac
+
+if (( ${#g_arg} < args )); then
+    usage
+    die "Command $g_cmd needs $args argument(s)!"
+fi
+
+if (( root == 1 )); then
+    [[ "$UID" != 0 ]] && die "This command needs root privileges!"
+fi
+
+"${handler[@]}"
