@@ -147,6 +147,11 @@ cmd_status() {
     systemctl status "${g_service}@${g_arg[0]}.service"
 }
 
+# Simple systemd wrapper to show tunnel log
+cmd_log() {
+    journalctl -u "${g_service}@${g_arg[0]}.service"
+}
+
 # List running tunnels
 cmd_list() {
     systemctl list-units -t service --full --no-legend --no-pager | \
@@ -317,6 +322,7 @@ case "$g_cmd" in
     connect)    handler=(cmd_profile run);   args=1; root=0 ;;
     test)       handler=(cmd_profile test);  args=1; root=1 ;;
     status)     handler=(cmd_status);        args=1; root=0 ;;
+    log)        handler=(cmd_log);           args=1; root=0 ;;
     help)       usage; exit 0                               ;;
     "")         usage; exit 1                               ;;
     *)          usage; die "Invalid command: $g_cmd"        ;;
