@@ -45,14 +45,20 @@ conf_section() {
 # $2: name of the key
 # $3: default value (optional)
 conf_key() {
+    local found
     (( $# < 2 )) && return 2
+    found=0
     while read -r line; do
         key="${line%%=*}"
         val="${line#*=}"
-        [[ "$key" == "$2" ]] && echo "$val" && return 0
+        [[ "$key" == "$2" ]] && echo "$val" && found=1
     done < <(conf_section "$1")
-    [[ "$3" ]] && echo "$3"
-    return 1
+    if (( found == 1 )); then
+        return 0
+    else
+        [[ "$3" ]] && echo "$3"
+        return 1
+    fi
 }
 
 # Gets all sections from the config
