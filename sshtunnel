@@ -332,7 +332,7 @@ case "$g_cmd" in
     stop-all)   handler=(cmd_stop_all);      args=0; root=1 ;;
     list)       handler=(cmd_list);          args=0; root=0 ;;
     print)      handler=(cmd_profile print); args=1; root=0 ;;
-    ssh-keygen) handler=(cmd_ssh_keygen);    args=1; root=1 ;;
+    ssh-keygen) handler=(cmd_ssh_keygen);    args=0; root=1 ;;
     connect)    handler=(cmd_profile run);   args=1; root=0 ;;
     test)       handler=(cmd_profile test);  args=1; root=1 ;;
     status)     handler=(cmd_status);        args=1; root=0 ;;
