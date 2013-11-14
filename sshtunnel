@@ -186,7 +186,7 @@ cmd_start_all() {
 
 # Stop all tunnels
 cmd_stop_all() {
-    cmd_list | while read tunne; do
+    cmd_list | while read tunnel; do
         g_arg=("$tunnel")
         cmd_stop
     done
