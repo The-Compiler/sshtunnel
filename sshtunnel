@@ -91,6 +91,7 @@ Usage: $0 [-c <config>] <command> [<name>]
     Commands:
         start <name>   Starts the tunnel named <name>
         stop <name>    Stops the tunnel named <name>
+        restart <name> Restarts the tunnel named <name>
         enable <name>  Calls "systemd enable" on the tunnel named <name>
         disable <name> Calls "systemd disable" on the tunnel named <name>
         print <name>   Validates config and prints command that would be run
@@ -143,6 +144,11 @@ cmd_start() {
 # Simple systemd wrapper to stop tunnel
 cmd_stop() {
     systemctl stop "${g_service}@${g_arg[0]}.service"
+}
+
+# Simple systemd wrapper to start tunnel
+cmd_restart() {
+    systemctl restart "${g_service}@${g_arg[0]}.service"
 }
 
 # Simple systemd wrapper to show tunnel status
@@ -326,6 +332,7 @@ parseargs "$@"
 case "$g_cmd" in
     start)      handler=(cmd_start);         args=1; root=1 ;;
     stop)       handler=(cmd_stop);          args=1; root=1 ;;
+    restart)    handler=(cmd_restart);       args=1; root=1 ;;
     enable)     handler=(cmd_enable);        args=1; root=1 ;;
     disable)    handler=(cmd_disable);       args=1; root=1 ;;
     start-all)  handler=(cmd_start_all);     args=0; root=1 ;;
