@@ -146,7 +146,7 @@ cmd_stop() {
     systemctl stop "${g_service}@${g_arg[0]}.service"
 }
 
-# Simple systemd wrapper to start tunnel
+# Simple systemd wrapper to restart tunnel
 cmd_restart() {
     systemctl restart "${g_service}@${g_arg[0]}.service"
 }
