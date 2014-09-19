@@ -3,6 +3,12 @@ sshtunnel
 
 sshtunnel is an utility to manage ssh tunnel connections easily via systemd.
 
+Packages
+--------
+
+Archlinux AUR: https://aur.archlinux.org/packages/sshtunnel-git
+Fedora: https://copr.fedoraproject.org/coprs/metanova/sshtunnel/ (by metanova)
+
 Setting up new tunnels
 ----------------------
 
