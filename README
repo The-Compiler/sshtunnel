@@ -1,51 +1,64 @@
 sshtunnel
 =========
 
-sshtunnel is an utility to manage ssh tunnel connections easily via systemd.
+An utility to manage ssh tunnel connections easily via systemd.
 
 Packages
 --------
 
-Archlinux AUR: https://aur.archlinux.org/packages/sshtunnel-git
-Fedora: https://copr.fedoraproject.org/coprs/metanova/sshtunnel/ (by metanova)
+* Archlinux AUR: https://aur.archlinux.org/packages/sshtunnel-git[sshtunnel-git]
+* Fedora: https://copr.fedoraproject.org/coprs/metanova/sshtunnel/[sshtunnel]
+(by metanova, thanks!)
 
 Setting up new tunnels
 ----------------------
 
-First read /etc/sshtunnel.conf, understand it, and configure your new tunnel
+First read '/etc/sshtunnel.conf', understand it, and configure your new tunnel
 there.
 
-Tunnels are run as the user sshtunnel. In order for sshtunnel to work, you'll
+Tunnels are run as the user `sshtunnel`. In order for sshtunnel to work, you'll
 need to set up key-based authentication without a passphrase. Because of
 security concerns, you're highly advised to create a new user with the shell
-set to /bin/false on the server:
+set to '/bin/false' on the server:
 
-  # mkdir /var/lib/sshtunnel
-  # groupadd -r sshtunnel
-  # useradd -r -g sshtunnel -d /var/lib/sshtunnel -s /bin/false -c sshtunnel sshtunnel
-  # chown sshtunnel:sshtunnel /var/lib/sshtunnel
+----
+# mkdir /var/lib/sshtunnel
+# groupadd -r sshtunnel
+# useradd -r -g sshtunnel -d /var/lib/sshtunnel -s /bin/false -c sshtunnel sshtunnel
+# chown sshtunnel:sshtunnel /var/lib/sshtunnel
+----
 
 On the client, generate a new key with an empty passphrase like this:
 
-  # sshtunnel ssh-keygen
+----
+# sshtunnel ssh-keygen
+----
 
-Then copy the echoed key by hand to /var/lib/sshtunnel/.ssh/authorized_keys.
+Then copy the echoed key by hand to '/var/lib/sshtunnel/.ssh/authorized_keys'.
 
 Now open a test-connection to the tunnel to accept the host key:
 
-  # sshtunnel test <name>
+----
+# sshtunnel test <name>
+----
 
-Note this will call x11-ssh-askpass because it isn't controlling the terminal.
+Note this will call `x11-ssh-askpass` because ssh isn't controlling the
+terminal.
+
 If you're not running X, you might want to do this by hand:
 
-  # su sshtunnel -s /bin/bash
-  $ ssh sshtunnel@example.com exit
+----
+# su sshtunnel -s /bin/bash
+$ ssh sshtunnel@example.com exit
+----
 
 When you finished the setup procedure, you can now start the tunnel using
 sshtunnel, and then view its status:
 
- # sshtunnel start <name>
- # sshtunnel status <name>
+----
+# sshtunnel start <name>
+# sshtunnel status <name>
+----
 
 Support
 -------
