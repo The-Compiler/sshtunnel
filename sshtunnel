@@ -18,6 +18,7 @@
 
 g_config="/etc/sshtunnel.conf"
 g_service="sshtunnel"
+g_version="0.2"
 
 # Gets a config section from the config
 # $1: name of the section
@@ -115,6 +116,10 @@ parseargs() {
                 ;;
             -h | --help)
                 usage
+                exit 0
+                ;;
+            -v | --version)
+                echo "sshtunnel $g_version"
                 exit 0
                 ;;
             --) # End of all options
